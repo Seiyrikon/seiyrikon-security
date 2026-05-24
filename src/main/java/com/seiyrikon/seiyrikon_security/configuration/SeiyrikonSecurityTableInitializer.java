@@ -13,11 +13,15 @@ public class SeiyrikonSecurityTableInitializer implements ApplicationRunner {
 
 
     @Override
-    public void run(@NonNull ApplicationArguments args) {
+    public void run(@NonNull ApplicationArguments args) throws Exception {
         if(!properties.isAutoCreateSeiyrikonSecurityTable()) return;
 
-        createRoleTable();
-        createUserRoleTable();
+        try {
+            createRoleTable();
+            createUserRoleTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createRoleTable() {
