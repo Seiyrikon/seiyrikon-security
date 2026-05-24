@@ -1,12 +1,11 @@
 package com.seiyrikon.seiyrikon_security.configuration;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
-@Component
 @RequiredArgsConstructor
 public class SeiyrikonSecurityTableInitializer implements ApplicationRunner {
     private final JdbcTemplate jdbcTemplate;
@@ -14,7 +13,7 @@ public class SeiyrikonSecurityTableInitializer implements ApplicationRunner {
 
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(@NonNull ApplicationArguments args) {
         if(!properties.isAutoCreateSeiyrikonSecurityTable()) return;
 
         createRoleTable();

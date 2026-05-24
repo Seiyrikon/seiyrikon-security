@@ -1,11 +1,8 @@
 package com.seiyrikon.seiyrikon_security.configuration;
 
-import org.springframework.stereotype.Component;
-
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class SeiyrikonSecurityStartUpCheck {
     private final SeiyrikonSecurityTokenConfiguration securityTokenConfiguration;
