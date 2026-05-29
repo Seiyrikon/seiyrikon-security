@@ -4,6 +4,7 @@ import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepo
 import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthProvider;
 import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthServiceImpl;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
+import jakarta.persistence.EntityManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,6 +34,13 @@ public class SeiyrikonSecurityAutoConfiguration {
     @Bean
     public SeiyrikonSecurityJwtUtilComponent jwtUtilComponent(SeiyrikonSecurityTokenConfiguration securityTokenConfiguration) {
         return new  SeiyrikonSecurityJwtUtilComponent(securityTokenConfiguration);
+    }
+
+    @Bean
+    public SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository(
+            EntityManager entityManager,
+            SeiyrikonSecurityTableProperties properties) {
+        return new  SeiyrikonSecurityUserRoleRepository(entityManager, properties);
     }
 
     @Bean
