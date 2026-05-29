@@ -31,6 +31,11 @@ public class SeiyrikonSecurityAutoConfiguration {
     }
 
     @Bean
+    public SeiyrikonSecurityJwtUtilComponent jwtUtilComponent(SeiyrikonSecurityTokenConfiguration securityTokenConfiguration) {
+        return new  SeiyrikonSecurityJwtUtilComponent(securityTokenConfiguration);
+    }
+
+    @Bean
     @ConditionalOnBean(SeiyrikonSecurityAuthProvider.class)
     public SeiyrikonSecurityAuthServiceImpl seiyrikonSecurityAuthService(
             SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider,
