@@ -1,11 +1,9 @@
-package com.seiyrikon.seiyrikon_security.service.impl;
+package com.seiyrikon.seiyrikon_security.service;
 
 import com.seiyrikon.seiyrikon_security.domain.SeiyrikonSecurityAuthResponse;
 import com.seiyrikon.seiyrikon_security.domain.SeiyrikonSecurityUser;
 import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepository;
-import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthProvider;
-import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthService;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,13 +16,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class SeiyrikonSecurityAuthServiceImpl implements SeiyrikonSecurityAuthService {
+public class SeiyrikonSecurityAuthServiceImpl{
 
     private final SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider;
     private final SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent;
     private final SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository;
 
-    @Override
     public SeiyrikonSecurityAuthResponse authenticate(String identifier, String rawPassword) {
 
         SeiyrikonSecurityUser user = seiyrikonSecurityAuthProvider.findUser(identifier);
