@@ -1,7 +1,6 @@
 package com.seiyrikon.seiyrikon_security.constant;
 
-public class SeiyrikonSecurityConstant {
-
+public class SeiyrikonSecurityTableConstant {
     //tables names
     public static final String defaultRoleTable = "role";
     public static final String defaultUserRoleTable = "user_role";
@@ -16,6 +15,4 @@ public class SeiyrikonSecurityConstant {
     //user_role table columns
     public static final String defaultUserRoleUserIdColumn = "user_id";
     public static final String defaultUserRoleRoleIdColumn = "role_id";
-
-
 }

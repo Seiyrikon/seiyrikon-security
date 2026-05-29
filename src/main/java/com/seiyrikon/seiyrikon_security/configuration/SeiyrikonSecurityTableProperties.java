@@ -1,6 +1,6 @@
 package com.seiyrikon.seiyrikon_security.configuration;
 
-import com.seiyrikon.seiyrikon_security.constant.SeiyrikonSecurityConstant;
+import com.seiyrikon.seiyrikon_security.constant.SeiyrikonSecurityTableConstant;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -8,20 +8,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class SeiyrikonSecurityTableProperties {
     //table names
-    private String roleTable = SeiyrikonSecurityConstant.defaultRoleTable;
-    private String userRoleTable = SeiyrikonSecurityConstant.defaultUserRoleTable;
+    private String roleTable = SeiyrikonSecurityTableConstant.defaultRoleTable;
+    private String userRoleTable = SeiyrikonSecurityTableConstant.defaultUserRoleTable;
 
     //table id types
-    private String roleIdType = SeiyrikonSecurityConstant.defaultIdType;
-    private String userIdType = SeiyrikonSecurityConstant.defaultIdType;
+    private String roleIdType = SeiyrikonSecurityTableConstant.defaultIdType;
+    private String userIdType = SeiyrikonSecurityTableConstant.defaultIdType;
 
     //role table columns
-    private String roleIdColumn = SeiyrikonSecurityConstant.defaultRoleIdColumn;
-    private String roleNameColumn = SeiyrikonSecurityConstant.defaultRoleNameColumn;
+    private String roleIdColumn = SeiyrikonSecurityTableConstant.defaultRoleIdColumn;
+    private String roleNameColumn = SeiyrikonSecurityTableConstant.defaultRoleNameColumn;
 
     //user_role table columns
-    private String userRoleRoleIdColumn = SeiyrikonSecurityConstant.defaultUserRoleRoleIdColumn;
-    private String userRoleUserIdColumn = SeiyrikonSecurityConstant.defaultUserRoleUserIdColumn;
+    private String userRoleRoleIdColumn = SeiyrikonSecurityTableConstant.defaultUserRoleRoleIdColumn;
+    private String userRoleUserIdColumn = SeiyrikonSecurityTableConstant.defaultUserRoleUserIdColumn;
 
     private boolean autoCreateSeiyrikonSecurityTable = true;
 }
