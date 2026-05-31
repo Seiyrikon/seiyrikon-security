@@ -20,7 +20,7 @@ public class SeiyrikonSecurityFilterChainConfiguratiion {
     private final SeiyrikonSecurityFilterChainProperties seiyrikonSecurityFilterChainProperties;
 
     @Bean
-    public SecurityFilterChain springSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain seiyrikonSecurityFilterChain(HttpSecurity http) throws Exception {
 
         // DEBUG - remove after fixing
         System.out.println("Whitelisted paths: " +
