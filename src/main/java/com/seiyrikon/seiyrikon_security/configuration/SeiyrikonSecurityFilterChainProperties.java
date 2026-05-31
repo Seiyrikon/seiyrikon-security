@@ -3,8 +3,8 @@ package com.seiyrikon.seiyrikon_security.configuration;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "seiyrikon-security.whitelisted-paths")
+@ConfigurationProperties(prefix = "seiyrikon-security")
 @Data
 public class SeiyrikonSecurityFilterChainProperties {
-    private String[] whitelistedPaths;
+    private String[] whitelistedPaths = {};
 }
