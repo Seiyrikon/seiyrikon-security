@@ -61,4 +61,12 @@ public class SeiyrikonSecurityAutoConfiguration {
     ) {
         return new SeiyrikonSecurityFilterChainConfiguratiion(seiyrikonSecurityJwtAuthenticationFilter, seiyrikonSecurityFilterChainProperties);
     }
+
+    @Bean
+    public SeiyrikonSecurityJwtAuthenticationFilter seiyrikonSecurityJwtAuthenticationFilter(
+            SeiyrikonSecurityJwtConfiguration seiyrikonSecurityJwtConfiguration,
+            SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent
+    ) {
+        return new SeiyrikonSecurityJwtAuthenticationFilter(seiyrikonSecurityJwtConfiguration, seiyrikonSecurityJwtUtilComponent);
+    }
 }
