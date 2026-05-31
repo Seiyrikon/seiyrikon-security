@@ -9,9 +9,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @AutoConfiguration
+@Import(SeiyrikonSecurityFilterChainConfiguratiion.class)
 @EnableConfigurationProperties({
         SeiyrikonSecurityTokenConfiguration.class,
         SeiyrikonSecurityTableProperties.class,
@@ -56,28 +58,10 @@ public class SeiyrikonSecurityAutoConfiguration {
     }
 
     @Bean
-    public SeiyrikonSecurityFilterChainConfiguratiion seiyrikonSecurityFilterChainConfiguratiion(
-            SeiyrikonSecurityJwtAuthenticationFilter seiyrikonSecurityJwtAuthenticationFilter,
-            SeiyrikonSecurityFilterChainProperties seiyrikonSecurityFilterChainProperties
-    ) {
-        return new SeiyrikonSecurityFilterChainConfiguratiion(seiyrikonSecurityJwtAuthenticationFilter, seiyrikonSecurityFilterChainProperties);
-    }
-
-    @Bean
     public SeiyrikonSecurityJwtAuthenticationFilter seiyrikonSecurityJwtAuthenticationFilter(
             SeiyrikonSecurityJwtConfiguration seiyrikonSecurityJwtConfiguration,
             SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent
     ) {
         return new SeiyrikonSecurityJwtAuthenticationFilter(seiyrikonSecurityJwtConfiguration, seiyrikonSecurityJwtUtilComponent);
-    }
-
-    @Bean
-    public SeiyrikonSecurityJwtConfiguration  seiyrikonSecurityJwtConfiguration() {
-        return new SeiyrikonSecurityJwtConfiguration();
-    }
-
-    @Bean
-    public SeiyrikonSecurityFilterChainProperties  seiyrikonSecurityFilterChainProperties() {
-        return new SeiyrikonSecurityFilterChainProperties();
     }
 }
