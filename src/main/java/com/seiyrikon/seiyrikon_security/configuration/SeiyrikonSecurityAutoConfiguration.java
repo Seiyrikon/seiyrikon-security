@@ -74,4 +74,9 @@ public class SeiyrikonSecurityAutoConfiguration {
     public SeiyrikonSecurityJwtConfiguration  seiyrikonSecurityJwtConfiguration() {
         return new SeiyrikonSecurityJwtConfiguration();
     }
+
+    @Bean
+    public SeiyrikonSecurityFilterChainProperties  seiyrikonSecurityFilterChainProperties() {
+        return new SeiyrikonSecurityFilterChainProperties();
+    }
 }
