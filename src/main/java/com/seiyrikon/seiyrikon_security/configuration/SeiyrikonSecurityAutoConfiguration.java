@@ -14,7 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @AutoConfiguration
 @EnableConfigurationProperties({
         SeiyrikonSecurityTokenConfiguration.class,
-        SeiyrikonSecurityTableProperties.class
+        SeiyrikonSecurityTableProperties.class,
+        SeiyrikonSecurityAuthProvider.class
 })
 public class SeiyrikonSecurityAutoConfiguration {
 

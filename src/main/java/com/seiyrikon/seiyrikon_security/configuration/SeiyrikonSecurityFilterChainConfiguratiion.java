@@ -10,6 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -21,6 +23,11 @@ public class SeiyrikonSecurityFilterChainConfiguratiion {
 
     @Bean
     public SecurityFilterChain springSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        // DEBUG - remove after fixing
+        System.out.println("Whitelisted paths: " +
+                Arrays.toString(seiyrikonSecurityFilterChainProperties.getWhitelistedPaths()));
+
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth.requestMatchers(seiyrikonSecurityFilterChainProperties.getWhitelistedPaths()).permitAll().anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
