@@ -64,4 +64,9 @@ public class SeiyrikonSecurityAutoConfiguration {
     ) {
         return new SeiyrikonSecurityJwtAuthenticationFilter(seiyrikonSecurityJwtConfiguration, seiyrikonSecurityJwtUtilComponent);
     }
+
+    @Bean
+    public SeiyrikonSecurityJwtConfiguration securityJwtConfiguration() {
+        return new SeiyrikonSecurityJwtConfiguration();
+    }
 }
