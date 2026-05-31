@@ -25,7 +25,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
     private final SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader(seiyrikonSecurityJwtConfiguration.getHeader());
 
         if(header == null || !header.startsWith(seiyrikonSecurityJwtConfiguration.getPrefix())) {

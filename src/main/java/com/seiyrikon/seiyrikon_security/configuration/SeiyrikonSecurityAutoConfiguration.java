@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 })
 public class SeiyrikonSecurityAutoConfiguration {
 
+
     @Bean
     public SeiyrikonSecurityStartUpCheck startUpCheck(SeiyrikonSecurityTokenConfiguration securityTokenConfiguration) {
         return new  SeiyrikonSecurityStartUpCheck(securityTokenConfiguration);
@@ -51,5 +52,13 @@ public class SeiyrikonSecurityAutoConfiguration {
             SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository
     ) {
         return new SeiyrikonSecurityAuthServiceImpl(seiyrikonSecurityAuthProvider, seiyrikonSecurityJwtUtilComponent, seiyrikonSecurityUserRoleRepository);
+    }
+
+    @Bean
+    public SeiyrikonSecurityFilterChainConfiguratiion seiyrikonSecurityFilterChainConfiguratiion(
+            SeiyrikonSecurityJwtAuthenticationFilter seiyrikonSecurityJwtAuthenticationFilter,
+            SeiyrikonSecurityFilterChainProperties seiyrikonSecurityFilterChainProperties
+    ) {
+        return new SeiyrikonSecurityFilterChainConfiguratiion(seiyrikonSecurityJwtAuthenticationFilter, seiyrikonSecurityFilterChainProperties);
     }
 }
