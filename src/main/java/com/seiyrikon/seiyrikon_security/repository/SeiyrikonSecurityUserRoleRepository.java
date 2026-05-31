@@ -17,7 +17,7 @@ public class SeiyrikonSecurityUserRoleRepository {
     public List<String> getUserRoles(Object userId) {
         String sql = String.format(
                 "SELECT r.%s FROM %s r " +
-                "JOIN %s ur ON r.%s = ur.%s" +
+                "JOIN %s ur ON r.%s = ur.%s " +
                 "WHERE ur.%s = :userId",
                 properties.getRoleNameColumn(),
                 properties.getRoleTable(),
