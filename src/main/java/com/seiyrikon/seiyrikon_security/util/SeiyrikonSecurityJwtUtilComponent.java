@@ -1,7 +1,9 @@
 package com.seiyrikon.seiyrikon_security.util;
 
 import com.seiyrikon.seiyrikon_security.configuration.SeiyrikonSecurityTokenConfiguration;
+import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -63,13 +65,13 @@ public class SeiyrikonSecurityJwtUtilComponent {
         return Collections.emptyList();
     }
 
-    public boolean isTokenExpired(String jwt) {
-        return extractClaim(jwt, Claims::getExpiration).before(new Date());
-    }
-
     private <T> T extractClaim(String jwt, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(jwt);
-        return claimsResolver.apply(claims);
+        try {
+            final Claims claims = extractAllClaims(jwt);
+            return claimsResolver.apply(claims);
+        } catch (ExpiredJwtException ex) {
+            throw SeiyrikonSecurityAuthenticationException.expiredToken();
+        }
     }
 
     private Claims extractAllClaims(String jwt) {

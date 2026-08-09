@@ -53,10 +53,6 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
             throw SeiyrikonSecurityAuthenticationException.blackListedToken();
         }
 
-        if(seiyrikonSecurityJwtUtilComponent.isTokenExpired(jwt)) {
-            throw SeiyrikonSecurityAuthenticationException.expiredToken();
-        }
-
         if(SecurityContextHolder.getContext().getAuthentication() == null) {
             List<String> roles = seiyrikonSecurityJwtUtilComponent.getRoles(jwt);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
