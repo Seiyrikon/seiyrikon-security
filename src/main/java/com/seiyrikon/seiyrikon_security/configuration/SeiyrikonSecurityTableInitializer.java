@@ -59,4 +59,17 @@ public class SeiyrikonSecurityTableInitializer implements ApplicationRunner {
         jdbcTemplate.execute(sql);
     }
 
+    private void createTokenBlocklistTable() {
+        String sql = String.format("""
+        CREATE TABLE IF NOT EXISTS %s (
+            %s VARCHAR(512) PRIMARY KEY,
+            %s DATETIME NOT NULL
+        )
+        """,
+                properties.getTokenBlacklistTable(),
+                properties.getTokenBlacklistTokenColumn(),
+                properties.getTokenBlacklistExpiryColumn()
+        );
+        jdbcTemplate.execute(sql);
+    }
 }

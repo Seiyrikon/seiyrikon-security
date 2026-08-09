@@ -29,4 +29,25 @@ public class SeiyrikonSecurityAuthenticationException extends SeiyrikonSecurityD
                 SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_03
         );
     }
+
+    public static SeiyrikonSecurityAuthenticationException authHeaderIsNullOrNotBearer() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_04,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_04
+        );
+    }
+
+    public static SeiyrikonSecurityAuthenticationException blackListedToken() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_05,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_05
+        );
+    }
+
+    public static SeiyrikonSecurityAuthenticationException expiredToken() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_06,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_06
+        );
+    }
 }

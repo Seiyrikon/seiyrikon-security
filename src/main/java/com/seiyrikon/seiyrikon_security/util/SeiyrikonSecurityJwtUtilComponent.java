@@ -63,6 +63,10 @@ public class SeiyrikonSecurityJwtUtilComponent {
         return Collections.emptyList();
     }
 
+    public boolean isTokenExpired(String jwt) {
+        return extractClaim(jwt, Claims::getExpiration).before(new Date());
+    }
+
     private <T> T extractClaim(String jwt, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(jwt);
         return claimsResolver.apply(claims);
