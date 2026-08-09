@@ -19,6 +19,7 @@ public class SeiyrikonSecurityTableInitializer implements ApplicationRunner {
         try {
             createRoleTable();
             createUserRoleTable();
+            createTokenBlocklistTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
