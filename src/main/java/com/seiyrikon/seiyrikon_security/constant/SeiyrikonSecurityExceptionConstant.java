@@ -8,6 +8,8 @@ public class SeiyrikonSecurityExceptionConstant {
     public static final String AUTH_04 = "AUTH04";
     public static final String AUTH_05 = "AUTH05";
     public static final String AUTH_06 = "AUTH06";
+    public static final String AUTH_07 = "AUTH07";
+    public static final String AUTH_08 = "AUTH08";
 
     //error message
     public static final String ERR_MESSAGE_01 = "User not found.";
@@ -16,4 +18,6 @@ public class SeiyrikonSecurityExceptionConstant {
     public static final String ERR_MESSAGE_04 = "No token provided or is not a Bearer token.";
     public static final String ERR_MESSAGE_05 = "The token provided is blacklisted.";
     public static final String ERR_MESSAGE_06 = "Expired token.";
+    public static final String ERR_MESSAGE_07 = "No authenticated user found.";
+    public static final String ERR_MESSAGE_08 = "Invalid principal type.";
 }

@@ -50,4 +50,18 @@ public class SeiyrikonSecurityAuthenticationException extends SeiyrikonSecurityD
                 SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_06
         );
     }
+
+    public static SeiyrikonSecurityAuthenticationException authenticatedUserNotFound() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_07,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_07
+        );
+    }
+
+    public static SeiyrikonSecurityAuthenticationException invalidPrincipalType() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_08,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_08
+        );
+    }
 }
