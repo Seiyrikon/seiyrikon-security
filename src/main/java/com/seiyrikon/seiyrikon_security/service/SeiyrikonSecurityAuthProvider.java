@@ -1,6 +1,6 @@
 package com.seiyrikon.seiyrikon_security.service;
 
-import com.seiyrikon.seiyrikon_security.domain.SeiyrikonSecurityUser;
+import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityUser;
 
 public interface SeiyrikonSecurityAuthProvider {
 

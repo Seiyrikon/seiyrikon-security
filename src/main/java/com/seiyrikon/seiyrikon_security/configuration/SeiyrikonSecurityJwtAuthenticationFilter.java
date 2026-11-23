@@ -1,6 +1,6 @@
 package com.seiyrikon.seiyrikon_security.configuration;
 
-import com.seiyrikon.seiyrikon_security.domain.SeiyrikonSecurityUser;
+import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityUser;
 import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityTokenBlacklistRepository;
 import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthProvider;
@@ -16,7 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
     private final SeiyrikonSecurityJwtConfiguration seiyrikonSecurityJwtConfiguration;
     private final SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent;
     private final SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider;
-    private final SeiyrikonSecurityTokenBlacklistRepository  seiyrikonSecurityTokenBlacklistRepository;
+    private final SeiyrikonSecurityTokenBlacklistRepository seiyrikonSecurityTokenBlacklistRepository;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -49,7 +48,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
             throw SeiyrikonSecurityAuthenticationException.userNotFound();
         }
 
-        if(seiyrikonSecurityTokenBlacklistRepository.isTokenBlacklisted(jwt)) {
+        if(seiyrikonSecurityTokenBlacklistRepository.existsById(jwt)) {
             throw SeiyrikonSecurityAuthenticationException.blackListedToken();
         }
 

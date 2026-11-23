@@ -3,27 +3,26 @@ package com.seiyrikon.seiyrikon_security.configuration;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityTokenBlacklistRepository;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepository;
 import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthProvider;
-import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthServiceImpl;
+import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthService;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
-import jakarta.persistence.EntityManager;
+import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityTokenCleanupScheduler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @AutoConfiguration
+@AutoConfigurationPackage(basePackages = "com.seiyrikon.seiyrikon_security")
 @EnableScheduling
 @Import(SeiyrikonSecurityFilterChainConfiguratiion.class)
 @EnableConfigurationProperties({
         SeiyrikonSecurityTokenConfiguration.class,
-        SeiyrikonSecurityTableProperties.class,
         SeiyrikonSecurityFilterChainProperties.class
 })
 public class SeiyrikonSecurityAutoConfiguration {
-
 
     @Bean
     public SeiyrikonSecurityStartUpCheck startUpCheck(SeiyrikonSecurityTokenConfiguration securityTokenConfiguration) {
@@ -31,11 +30,9 @@ public class SeiyrikonSecurityAutoConfiguration {
     }
 
     @Bean
-    public SeiyrikonSecurityTableInitializer tableInitializer(
-            JdbcTemplate jdbcTemplate,
-            SeiyrikonSecurityTableProperties properties
-    ) {
-        return new SeiyrikonSecurityTableInitializer(jdbcTemplate, properties);
+    public SeiyrikonSecurityTokenCleanupScheduler tokenCleanupScheduler(
+            SeiyrikonSecurityTokenBlacklistRepository blacklistRepository) {
+        return new SeiyrikonSecurityTokenCleanupScheduler(blacklistRepository);
     }
 
     @Bean
@@ -44,20 +41,13 @@ public class SeiyrikonSecurityAutoConfiguration {
     }
 
     @Bean
-    public SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository(
-            EntityManager entityManager,
-            SeiyrikonSecurityTableProperties properties) {
-        return new  SeiyrikonSecurityUserRoleRepository(entityManager, properties);
-    }
-
-    @Bean
     @ConditionalOnBean(SeiyrikonSecurityAuthProvider.class)
-    public SeiyrikonSecurityAuthServiceImpl seiyrikonSecurityAuthService(
+    public SeiyrikonSecurityAuthService seiyrikonSecurityAuthService(
             SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider,
             SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent,
             SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository
     ) {
-        return new SeiyrikonSecurityAuthServiceImpl(seiyrikonSecurityAuthProvider, seiyrikonSecurityJwtUtilComponent, seiyrikonSecurityUserRoleRepository);
+        return new SeiyrikonSecurityAuthService(seiyrikonSecurityAuthProvider, seiyrikonSecurityJwtUtilComponent, seiyrikonSecurityUserRoleRepository);
     }
 
     @Bean
@@ -73,15 +63,5 @@ public class SeiyrikonSecurityAutoConfiguration {
     @Bean
     public SeiyrikonSecurityJwtConfiguration securityJwtConfiguration() {
         return new SeiyrikonSecurityJwtConfiguration();
-    }
-
-    @Bean
-    public SeiyrikonSecurityTokenBlacklistRepository securityTokenBlacklistRepository(
-            JdbcTemplate jdbcTemplate,
-            SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent,
-            SeiyrikonSecurityJwtConfiguration seiyrikonSecurityJwtConfiguration,
-            SeiyrikonSecurityTableProperties seiyrikonSecurityTableProperties
-    ) {
-        return new SeiyrikonSecurityTokenBlacklistRepository(jdbcTemplate, seiyrikonSecurityJwtUtilComponent,  seiyrikonSecurityJwtConfiguration, seiyrikonSecurityTableProperties);
     }
 }

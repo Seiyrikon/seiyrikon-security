@@ -1,7 +1,7 @@
 package com.seiyrikon.seiyrikon_security.service;
 
-import com.seiyrikon.seiyrikon_security.domain.SeiyrikonSecurityAuthResponse;
-import com.seiyrikon.seiyrikon_security.domain.SeiyrikonSecurityUser;
+import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityAuthResponse;
+import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityUser;
 import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepository;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
@@ -9,14 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class SeiyrikonSecurityAuthServiceImpl{
+public class SeiyrikonSecurityAuthService {
 
     private final SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider;
     private final SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent;
@@ -33,7 +32,7 @@ public class SeiyrikonSecurityAuthServiceImpl{
             throw SeiyrikonSecurityAuthenticationException.invalidCredentials();
         }
 
-        List<String> roles = seiyrikonSecurityUserRoleRepository.getUserRoles(user.getUserId());
+        List<String> roles = seiyrikonSecurityUserRoleRepository.findRoleNamesByUserId(user.getUserId());
         if (roles.isEmpty()) {
             throw SeiyrikonSecurityAuthenticationException.userLacksRoles();
         }

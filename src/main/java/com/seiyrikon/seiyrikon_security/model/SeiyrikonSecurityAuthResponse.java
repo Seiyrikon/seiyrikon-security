@@ -1,4 +1,4 @@
-package com.seiyrikon.seiyrikon_security.domain;
+package com.seiyrikon.seiyrikon_security.model;
 
 import lombok.Builder;
 import lombok.Data;
