@@ -210,6 +210,68 @@ INSERT INTO role (id, name) VALUES ('1', 'ROLE_ADMIN'), ('2', 'ROLE_USER');
 INSERT INTO user_role (user_id, role_id) VALUES ('ADMIN1', '1');
 ```
 
+### PostgreSQL (with a custom schema)
+
+**Driver** (replaces the MySQL one):
+
+```xml
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+**Datasource.** Set the schema on the JDBC URL so it applies to *every* query, including the library's `JdbcTemplate` DDL and native SQL:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_db?currentSchema=your_schema
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+```
+
+> `spring.jpa.properties.hibernate.default_schema` is **not enough** on its own. It only affects Hibernate-generated SQL, not the library's native queries or `JdbcTemplate` calls.
+
+**Alternative:** schema-qualify the table names instead of using `currentSchema`:
+
+```properties
+seiyrikon-security.table-configuration.role-table=your_schema.role
+seiyrikon-security.table-configuration.user-role-table=your_schema.user_role
+```
+
+**Create the schema first.** Auto-create only creates tables, not the schema itself:
+
+```sql
+CREATE SCHEMA IF NOT EXISTS your_schema;
+```
+
+**Manual table creation** (if auto-create is off):
+
+```sql
+CREATE TABLE IF NOT EXISTS your_schema.role (
+    id   VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS your_schema.user_role (
+    user_id VARCHAR(255) NOT NULL,
+    role_id VARCHAR(255) NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (role_id) REFERENCES your_schema.role(id)
+);
+```
+
+**MySQL-only SQL to avoid in the library** (check `SeiyrikonSecurityTokenBlacklistRepository` and the table initializer):
+
+| MySQL | PostgreSQL |
+|-------|-----------|
+| `INSERT IGNORE INTO t (...) VALUES (...)` | `INSERT INTO t (...) VALUES (...) ON CONFLICT (token) DO NOTHING` |
+| `DATETIME` | `TIMESTAMP` |
+| backtick identifiers | double quotes (or none) |
+
+`CREATE TABLE IF NOT EXISTS`, `VARCHAR(255)`, `NOW()` and the role/user_role join query work on both.
+
 ### Role naming rule
 
 `hasRole('ADMIN')` expects the database value to be **`ROLE_ADMIN`** (Spring adds the `ROLE_` prefix). If you store plain values like `ADMIN`, use `hasAuthority('ADMIN')` instead.
