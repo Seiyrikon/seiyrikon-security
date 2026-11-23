@@ -13,4 +13,10 @@ import lombok.Setter;
 public class SeiyrikonSecurityUserRole {
     @EmbeddedId
     private SeiyrikonSecurityUserRoleId id;
+
+    public SeiyrikonSecurityUserRole(String userId, String roleId) {
+        this.id = new SeiyrikonSecurityUserRoleId();
+        this.id.setUserId(userId);
+        this.id.setRoleId(roleId);
+    }
 }
