@@ -80,6 +80,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
                         .generateRefreshToken(extraClaims, user.getUserId());
 
                 currentTokenSession.setId(new SeiyrikonSecurityTokenSession(user.getUserId()).getId());
+                currentTokenSession.setToken(jwt);
                 currentTokenSession.setRefreshToken(refreshToken);
                 seiyrikonSecurityTokenSessionRepository.save(currentTokenSession);
             } else {
