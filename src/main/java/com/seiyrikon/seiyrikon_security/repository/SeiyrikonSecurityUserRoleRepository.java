@@ -1,7 +1,7 @@
 package com.seiyrikon.seiyrikon_security.repository;
 
-import com.seiyrikon.seiyrikon_security.tables.SeiyrikonSecurityUserRole;
-import com.seiyrikon.seiyrikon_security.tables.SeiyrikonSecurityUserRoleId;
+import com.seiyrikon.seiyrikon_security.tables.composite.user_role.SeiyrikonSecurityUserRole;
+import com.seiyrikon.seiyrikon_security.tables.composite.user_role.id.SeiyrikonSecurityUserRoleId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

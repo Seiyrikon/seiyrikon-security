@@ -37,6 +37,20 @@ public class SeiyrikonSecurityJwtUtilComponent {
                 .compact();
     }
 
+    public String generateRefreshToken(Map<String, Object> extraClaims, Object userId) {
+        Instant now = Instant.now();
+        Instant jwtExpiration = now.plus(1, ChronoUnit.MONTHS);
+
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(String.valueOf(userId))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(Date.from(jwtExpiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String getUserId(String jwt) {
         return extractClaim(jwt, Claims::getSubject);
     }

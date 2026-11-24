@@ -10,6 +10,8 @@ public class SeiyrikonSecurityExceptionConstant {
     public static final String AUTH_06 = "AUTH06";
     public static final String AUTH_07 = "AUTH07";
     public static final String AUTH_08 = "AUTH08";
+    public static final String AUTH_09 = "AUTH09";
+    public static final String AUTH_10 = "AUTH10";
 
     //error message
     public static final String ERR_MESSAGE_01 = "User not found.";
@@ -20,4 +22,6 @@ public class SeiyrikonSecurityExceptionConstant {
     public static final String ERR_MESSAGE_06 = "Expired token.";
     public static final String ERR_MESSAGE_07 = "No authenticated user found.";
     public static final String ERR_MESSAGE_08 = "Invalid principal type.";
+    public static final String ERR_MESSAGE_09 = "Unauthenticated user.";
+    public static final String ERR_MESSAGE_10 = "Please login again.";
 }

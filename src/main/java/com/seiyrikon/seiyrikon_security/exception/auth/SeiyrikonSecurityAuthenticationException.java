@@ -64,4 +64,18 @@ public class SeiyrikonSecurityAuthenticationException extends SeiyrikonSecurityD
                 SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_08
         );
     }
+
+    public static SeiyrikonSecurityAuthenticationException unauthenticatedUser() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_09,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_09
+        );
+    }
+
+    public static SeiyrikonSecurityAuthenticationException reAuthenticate() {
+        return new SeiyrikonSecurityAuthenticationException(
+                SeiyrikonSecurityExceptionConstant.AUTH_10,
+                SeiyrikonSecurityExceptionConstant.ERR_MESSAGE_10
+        );
+    }
 }

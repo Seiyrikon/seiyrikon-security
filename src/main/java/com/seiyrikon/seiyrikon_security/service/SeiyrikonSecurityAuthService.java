@@ -4,9 +4,14 @@ import com.seiyrikon.seiyrikon_security.constant.AppConstants;
 import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityAuthResponse;
 import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityUser;
 import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
+import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityTokenBlacklistRepository;
+import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityTokenSessionRepository;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepository;
-import com.seiyrikon.seiyrikon_security.tables.SeiyrikonSecurityUserRole;
+import com.seiyrikon.seiyrikon_security.tables.composite.token_blacklist.SeiyrikonSecurityTokenBlacklist;
+import com.seiyrikon.seiyrikon_security.tables.composite.token_session.SeiyrikonSecurityTokenSession;
+import com.seiyrikon.seiyrikon_security.tables.composite.user_role.SeiyrikonSecurityUserRole;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
+import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +27,8 @@ public class SeiyrikonSecurityAuthService {
     private final SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider;
     private final SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent;
     private final SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository;
+    private final SeiyrikonSecurityTokenSessionRepository seiyrikonSecurityTokenSessionRepository;
+    private final SeiyrikonSecurityTokenBlacklistRepository seiyrikonSecurityTokenBlacklistRepository;
 
     public SeiyrikonSecurityAuthResponse authenticate(String identifier, String rawPassword) {
 
@@ -79,6 +86,7 @@ public class SeiyrikonSecurityAuthService {
         extraClaims.put("roles", roles);
 
         String accessToken = seiyrikonSecurityJwtUtilComponent.generateToken(extraClaims, user.getUserId());
+        String refreshToken = seiyrikonSecurityJwtUtilComponent.generateRefreshToken(extraClaims, user.getUserId());
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
@@ -88,8 +96,24 @@ public class SeiyrikonSecurityAuthService {
                 );
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
+        SeiyrikonSecurityTokenSession tokenSession =
+                new SeiyrikonSecurityTokenSession(user.getUserId(), accessToken);
+        tokenSession.setRefreshToken(refreshToken);
+
+        seiyrikonSecurityTokenSessionRepository.save(tokenSession);
+
         return SeiyrikonSecurityAuthResponse.builder()
                 .accessToken(accessToken)
                 .build();
+    }
+
+    public boolean logout(String accessToken) {
+        String userId = SeiyrikonSecurityPrincipal.getCurrentUserId().toString();
+        SeiyrikonSecurityTokenBlacklist tokenBlacklist =
+                new SeiyrikonSecurityTokenBlacklist(userId, accessToken);
+
+        SeiyrikonSecurityTokenBlacklist blacklistedToken = seiyrikonSecurityTokenBlacklistRepository.save(tokenBlacklist);
+
+        return seiyrikonSecurityTokenBlacklistRepository.existsById(blacklistedToken.getId());
     }
 }

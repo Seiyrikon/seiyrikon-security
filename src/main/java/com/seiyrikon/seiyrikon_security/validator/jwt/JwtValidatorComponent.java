@@ -10,7 +10,7 @@ public class JwtValidatorComponent {
 
     private final SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent;
 
-    public boolean isJwtValid(String jwt) {
+    public boolean validToken(String jwt) {
         return seiyrikonSecurityJwtUtilComponent.getJwtIssuedAt(jwt).before(seiyrikonSecurityJwtUtilComponent.getJwtExpiration(jwt));
     }
 }

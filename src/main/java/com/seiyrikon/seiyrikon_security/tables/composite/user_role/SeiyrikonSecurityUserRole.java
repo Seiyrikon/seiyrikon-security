@@ -1,5 +1,6 @@
-package com.seiyrikon.seiyrikon_security.tables;
+package com.seiyrikon.seiyrikon_security.tables.composite.user_role;
 
+import com.seiyrikon.seiyrikon_security.tables.composite.user_role.id.SeiyrikonSecurityUserRoleId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

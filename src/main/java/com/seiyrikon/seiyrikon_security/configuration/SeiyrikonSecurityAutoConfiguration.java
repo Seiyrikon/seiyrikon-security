@@ -1,11 +1,13 @@
 package com.seiyrikon.seiyrikon_security.configuration;
 
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityTokenBlacklistRepository;
+import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityTokenSessionRepository;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepository;
 import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthProvider;
 import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthService;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityTokenCleanupScheduler;
+import com.seiyrikon.seiyrikon_security.validator.jwt.JwtValidatorComponent;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -45,9 +47,16 @@ public class SeiyrikonSecurityAutoConfiguration {
     public SeiyrikonSecurityAuthService seiyrikonSecurityAuthService(
             SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider,
             SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent,
-            SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository
+            SeiyrikonSecurityUserRoleRepository seiyrikonSecurityUserRoleRepository,
+            SeiyrikonSecurityTokenSessionRepository seiyrikonSecurityTokenSessionRepository,
+            SeiyrikonSecurityTokenBlacklistRepository seiyrikonSecurityTokenBlacklistRepository
     ) {
-        return new SeiyrikonSecurityAuthService(seiyrikonSecurityAuthProvider, seiyrikonSecurityJwtUtilComponent, seiyrikonSecurityUserRoleRepository);
+        return new SeiyrikonSecurityAuthService(
+                seiyrikonSecurityAuthProvider,
+                seiyrikonSecurityJwtUtilComponent,
+                seiyrikonSecurityUserRoleRepository,
+                seiyrikonSecurityTokenSessionRepository,
+                seiyrikonSecurityTokenBlacklistRepository);
     }
 
     @Bean
@@ -55,9 +64,17 @@ public class SeiyrikonSecurityAutoConfiguration {
             SeiyrikonSecurityJwtConfiguration seiyrikonSecurityJwtConfiguration,
             SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent,
             SeiyrikonSecurityAuthProvider seiyrikonSecurityAuthProvider,
-            SeiyrikonSecurityTokenBlacklistRepository seiyrikonSecurityTokenBlacklistRepository
+            SeiyrikonSecurityTokenBlacklistRepository seiyrikonSecurityTokenBlacklistRepository,
+            JwtValidatorComponent jwtValidatorComponent,
+            SeiyrikonSecurityTokenSessionRepository seiyrikonSecurityTokenSessionRepository
     ) {
-        return new SeiyrikonSecurityJwtAuthenticationFilter(seiyrikonSecurityJwtConfiguration, seiyrikonSecurityJwtUtilComponent, seiyrikonSecurityAuthProvider, seiyrikonSecurityTokenBlacklistRepository);
+        return new SeiyrikonSecurityJwtAuthenticationFilter(
+                seiyrikonSecurityJwtConfiguration,
+                seiyrikonSecurityJwtUtilComponent,
+                seiyrikonSecurityAuthProvider,
+                seiyrikonSecurityTokenBlacklistRepository,
+                jwtValidatorComponent,
+                seiyrikonSecurityTokenSessionRepository);
     }
 
     @Bean
