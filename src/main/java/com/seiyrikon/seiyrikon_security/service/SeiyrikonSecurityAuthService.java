@@ -52,6 +52,7 @@ public class SeiyrikonSecurityAuthService {
         extraClaims.put("roles", roles);
 
         String accessToken = seiyrikonSecurityJwtUtilComponent.generateToken(extraClaims, user.getUserId());
+        String refreshToken = seiyrikonSecurityJwtUtilComponent.generateRefreshToken(extraClaims, user.getUserId());
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
@@ -60,6 +61,18 @@ public class SeiyrikonSecurityAuthService {
                         authorities
                 );
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        SeiyrikonSecurityTokenSession tokenSession =
+                seiyrikonSecurityTokenSessionRepository
+                        .findById(new SeiyrikonSecurityTokenSession(user.getUserId())
+                                .getId()).orElse(null);
+
+        if(tokenSession == null) {
+            tokenSession = new SeiyrikonSecurityTokenSession(user.getUserId());
+        }
+        tokenSession.setToken(accessToken);
+        tokenSession.setRefreshToken(refreshToken);
+        seiyrikonSecurityTokenSessionRepository.save(tokenSession);
 
         return SeiyrikonSecurityAuthResponse.builder()
                 .accessToken(accessToken)
@@ -97,7 +110,7 @@ public class SeiyrikonSecurityAuthService {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         SeiyrikonSecurityTokenSession tokenSession =
-                new SeiyrikonSecurityTokenSession(user.getUserId(), accessToken);
+                new SeiyrikonSecurityTokenSession(user.getUserId());
         tokenSession.setRefreshToken(refreshToken);
 
         seiyrikonSecurityTokenSessionRepository.save(tokenSession);
@@ -107,10 +120,10 @@ public class SeiyrikonSecurityAuthService {
                 .build();
     }
 
-    public boolean logout(String accessToken) {
+    public boolean logout() {
         String userId = SeiyrikonSecurityPrincipal.getCurrentUserId().toString();
         SeiyrikonSecurityTokenBlacklist tokenBlacklist =
-                new SeiyrikonSecurityTokenBlacklist(userId, accessToken);
+                new SeiyrikonSecurityTokenBlacklist(userId);
 
         SeiyrikonSecurityTokenBlacklist blacklistedToken = seiyrikonSecurityTokenBlacklistRepository.save(tokenBlacklist);
 

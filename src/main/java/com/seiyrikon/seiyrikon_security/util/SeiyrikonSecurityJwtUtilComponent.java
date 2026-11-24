@@ -39,7 +39,7 @@ public class SeiyrikonSecurityJwtUtilComponent {
 
     public String generateRefreshToken(Map<String, Object> extraClaims, Object userId) {
         Instant now = Instant.now();
-        Instant jwtExpiration = now.plus(1, ChronoUnit.MONTHS);
+        Instant jwtExpiration = now.plus(1, ChronoUnit.DAYS);
 
         return Jwts
                 .builder()

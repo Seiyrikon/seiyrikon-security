@@ -39,7 +39,12 @@ public class SeiyrikonSecurityAutoConfiguration {
 
     @Bean
     public SeiyrikonSecurityJwtUtilComponent jwtUtilComponent(SeiyrikonSecurityTokenConfiguration securityTokenConfiguration) {
-        return new  SeiyrikonSecurityJwtUtilComponent(securityTokenConfiguration);
+        return new SeiyrikonSecurityJwtUtilComponent(securityTokenConfiguration);
+    }
+
+    @Bean
+    public JwtValidatorComponent jwtValidatorComponent(SeiyrikonSecurityJwtUtilComponent seiyrikonSecurityJwtUtilComponent) {
+        return new JwtValidatorComponent(seiyrikonSecurityJwtUtilComponent);
     }
 
     @Bean

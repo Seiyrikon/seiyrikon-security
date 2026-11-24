@@ -16,9 +16,11 @@ public class SeiyrikonSecurityTokenBlacklist {
     @EmbeddedId
     private SeiyrikonSecurityTokenBlacklistId id;
 
-    public SeiyrikonSecurityTokenBlacklist(String userId, String token) {
+    @Column(name = "token", length = 1024)
+    private String token;
+
+    public SeiyrikonSecurityTokenBlacklist(String userId) {
         this.id = new SeiyrikonSecurityTokenBlacklistId();
         this.id.setUserId(userId);
-        this.id.setToken(token);
     }
 }

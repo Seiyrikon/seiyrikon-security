@@ -16,12 +16,14 @@ public class SeiyrikonSecurityTokenSession {
     @EmbeddedId
     private SeiyrikonSecurityTokenSessionId id;
 
+    @Column(name = "token", length = 1024)
+    private String token;
+
     @Column(name = "refreshToken", length = 1024)
     private String refreshToken;
 
-    public SeiyrikonSecurityTokenSession(String userId, String token) {
+    public SeiyrikonSecurityTokenSession(String userId) {
         this.id = new SeiyrikonSecurityTokenSessionId();
         this.id.setUserId(userId);
-        this.id.setToken(token);
     }
 }

@@ -16,7 +16,4 @@ public class SeiyrikonSecurityTokenSessionId {
 
     @Column(name = "user_id", length = 50)
     private String userId;
-
-    @Column(name = "token", length = 1024)
-    private String token;
 }

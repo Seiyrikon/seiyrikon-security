@@ -57,7 +57,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
         }
 
         if(seiyrikonSecurityTokenBlacklistRepository
-                .existsById(new SeiyrikonSecurityTokenBlacklist(user.getUserId(), jwt)
+                .existsById(new SeiyrikonSecurityTokenBlacklist(user.getUserId())
                         .getId())) {
             throw SeiyrikonSecurityAuthenticationException.blackListedToken();
         }
@@ -65,7 +65,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
         if(!jwtValidatorComponent.validToken(jwt)) {
             SeiyrikonSecurityTokenSession currentTokenSession =
                     seiyrikonSecurityTokenSessionRepository.findById(
-                            new SeiyrikonSecurityTokenSession(user.getUserId(), jwt).getId())
+                            new SeiyrikonSecurityTokenSession(user.getUserId()).getId())
                             .orElseThrow(SeiyrikonSecurityAuthenticationException::unauthenticatedUser);
 
             if(jwtValidatorComponent.validToken(currentTokenSession.getRefreshToken())) {
@@ -79,7 +79,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
                 String refreshToken = seiyrikonSecurityJwtUtilComponent
                         .generateRefreshToken(extraClaims, user.getUserId());
 
-                currentTokenSession.setId(new SeiyrikonSecurityTokenSession(user.getUserId(), jwt).getId());
+                currentTokenSession.setId(new SeiyrikonSecurityTokenSession(user.getUserId()).getId());
                 currentTokenSession.setRefreshToken(refreshToken);
                 seiyrikonSecurityTokenSessionRepository.save(currentTokenSession);
             } else {
