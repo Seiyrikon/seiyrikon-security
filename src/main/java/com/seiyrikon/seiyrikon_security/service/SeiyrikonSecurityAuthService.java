@@ -1,9 +1,11 @@
 package com.seiyrikon.seiyrikon_security.service;
 
+import com.seiyrikon.seiyrikon_security.constant.AppConstants;
 import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityAuthResponse;
 import com.seiyrikon.seiyrikon_security.model.SeiyrikonSecurityUser;
 import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
 import com.seiyrikon.seiyrikon_security.repository.SeiyrikonSecurityUserRoleRepository;
+import com.seiyrikon.seiyrikon_security.tables.SeiyrikonSecurityUserRole;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +33,40 @@ public class SeiyrikonSecurityAuthService {
         if (!seiyrikonSecurityAuthProvider.verifyPassword(rawPassword, user.getHashedPassword())) {
             throw SeiyrikonSecurityAuthenticationException.invalidCredentials();
         }
+
+        List<String> roles = seiyrikonSecurityUserRoleRepository.findRoleNamesByUserId(user.getUserId());
+        if (roles.isEmpty()) {
+            throw SeiyrikonSecurityAuthenticationException.userLacksRoles();
+        }
+
+        List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("roles", roles);
+
+        String accessToken = seiyrikonSecurityJwtUtilComponent.generateToken(extraClaims, user.getUserId());
+
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                        user.getUserId(),
+                        null,
+                        authorities
+                );
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        return SeiyrikonSecurityAuthResponse.builder()
+                .accessToken(accessToken)
+                .build();
+    }
+
+    public SeiyrikonSecurityAuthResponse register(String identifier) {
+
+        SeiyrikonSecurityUser user = seiyrikonSecurityAuthProvider.findUser(identifier);
+        if (user == null) {
+            throw SeiyrikonSecurityAuthenticationException.userNotFound();
+        }
+
+        seiyrikonSecurityUserRoleRepository.save(new SeiyrikonSecurityUserRole(user.getUserId(), AppConstants.USER_ROLE));
 
         List<String> roles = seiyrikonSecurityUserRoleRepository.findRoleNamesByUserId(user.getUserId());
         if (roles.isEmpty()) {
