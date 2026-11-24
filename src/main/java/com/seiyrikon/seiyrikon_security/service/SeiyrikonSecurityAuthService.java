@@ -122,6 +122,15 @@ public class SeiyrikonSecurityAuthService {
 
     public boolean logout() {
         String userId = SeiyrikonSecurityPrincipal.getCurrentUserId().toString();
+
+        if(seiyrikonSecurityTokenSessionRepository
+                .existsById(new SeiyrikonSecurityTokenSession(userId)
+                        .getId())) {
+            seiyrikonSecurityTokenSessionRepository
+                    .deleteById(new SeiyrikonSecurityTokenSession(userId)
+                            .getId());
+        }
+
         SeiyrikonSecurityTokenBlacklist tokenBlacklist =
                 new SeiyrikonSecurityTokenBlacklist(userId);
 
