@@ -78,6 +78,12 @@ public class SeiyrikonSecurityJwtUtilComponent {
         return Collections.emptyList();
     }
 
+    public String getUsername(String jwt) {
+        Claims claims = extractAllClaims(jwt);
+
+        return claims.get("username").toString();
+    }
+
     private <T> T extractClaim(String jwt, Function<Claims, T> claimsResolver) {
         try {
             final Claims claims = extractAllClaims(jwt);

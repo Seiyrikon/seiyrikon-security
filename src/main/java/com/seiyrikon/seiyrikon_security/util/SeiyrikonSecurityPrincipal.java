@@ -1,8 +1,9 @@
 package com.seiyrikon.seiyrikon_security.util;
 
 import com.seiyrikon.seiyrikon_security.exception.auth.SeiyrikonSecurityAuthenticationException;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-@Builder
+@SuperBuilder
+@NoArgsConstructor
 public class SeiyrikonSecurityPrincipal implements UserDetails {
 
     private Object userId;

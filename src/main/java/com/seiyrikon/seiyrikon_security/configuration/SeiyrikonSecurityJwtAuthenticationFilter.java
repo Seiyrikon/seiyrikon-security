@@ -8,6 +8,7 @@ import com.seiyrikon.seiyrikon_security.service.SeiyrikonSecurityAuthProvider;
 import com.seiyrikon.seiyrikon_security.tables.composite.token_blacklist.SeiyrikonSecurityTokenBlacklist;
 import com.seiyrikon.seiyrikon_security.tables.composite.token_session.SeiyrikonSecurityTokenSession;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
+import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityPrincipal;
 import com.seiyrikon.seiyrikon_security.validator.jwt.JwtValidatorComponent;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        Map<String, Object> extraClaims = new HashMap<>();
         String header = request.getHeader(seiyrikonSecurityJwtConfiguration.getHeader());
 
         if(header == null || !header.startsWith(seiyrikonSecurityJwtConfiguration.getPrefix())) {
@@ -48,18 +51,23 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
 
         String jwt = header.substring(seiyrikonSecurityJwtConfiguration.getPrefix().length());
 
-        String userId = seiyrikonSecurityJwtUtilComponent.getUserId(jwt);
+        String username = seiyrikonSecurityJwtUtilComponent.getUsername(jwt);
 
-        SeiyrikonSecurityUser user = seiyrikonSecurityAuthProvider.findUser(userId);
+        SeiyrikonSecurityUser user = seiyrikonSecurityAuthProvider.findUser(username);
 
         if(user == null) {
             throw SeiyrikonSecurityAuthenticationException.userNotFound();
         }
 
-        if(seiyrikonSecurityTokenBlacklistRepository
-                .existsById(new SeiyrikonSecurityTokenBlacklist(user.getUserId())
-                        .getId())) {
-            throw SeiyrikonSecurityAuthenticationException.blackListedToken();
+        SeiyrikonSecurityTokenBlacklist tokenBlacklist =
+                seiyrikonSecurityTokenBlacklistRepository
+                        .findById(new SeiyrikonSecurityTokenBlacklist(user.getUserId()).getId())
+                        .orElse(null);
+
+        if(tokenBlacklist != null) {
+            if(jwt.equals(tokenBlacklist.getToken())) {
+                throw SeiyrikonSecurityAuthenticationException.blackListedToken();
+            }
         }
 
         if(!jwtValidatorComponent.validToken(jwt)) {
@@ -70,7 +78,7 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
 
             if(jwtValidatorComponent.validToken(currentTokenSession.getRefreshToken())) {
                 List<String> roles = seiyrikonSecurityJwtUtilComponent.getRoles(currentTokenSession.getRefreshToken());
-                Map<String, Object> extraClaims = new HashMap<>();
+                extraClaims.put("username", username);
                 extraClaims.put("roles", roles);
 
                 jwt = seiyrikonSecurityJwtUtilComponent
@@ -90,7 +98,20 @@ public class SeiyrikonSecurityJwtAuthenticationFilter extends OncePerRequestFilt
 
         if(SecurityContextHolder.getContext().getAuthentication() == null) {
             List<String> roles = seiyrikonSecurityJwtUtilComponent.getRoles(jwt);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+
+            List<GrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+
+            SeiyrikonSecurityPrincipal principal = SeiyrikonSecurityPrincipal.builder()
+                    .userId(user.getUserId())
+                    .authorities(authorities)
+                    .build();
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            principal, null, authorities);
+
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 

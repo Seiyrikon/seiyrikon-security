@@ -14,6 +14,7 @@ import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityJwtUtilComponent;
 import com.seiyrikon.seiyrikon_security.util.SeiyrikonSecurityPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.HashMap;
@@ -46,17 +47,23 @@ public class SeiyrikonSecurityAuthService {
             throw SeiyrikonSecurityAuthenticationException.userLacksRoles();
         }
 
-        List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("username", user.getUsername());
         extraClaims.put("roles", roles);
 
         String accessToken = seiyrikonSecurityJwtUtilComponent.generateToken(extraClaims, user.getUserId());
         String refreshToken = seiyrikonSecurityJwtUtilComponent.generateRefreshToken(extraClaims, user.getUserId());
 
+        SeiyrikonSecurityPrincipal principal = SeiyrikonSecurityPrincipal.builder()
+                .userId(user.getUserId())
+                .authorities(authorities)
+                .build();
+
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
-                        user.getUserId(),
+                        principal,
                         null,
                         authorities
                 );
@@ -93,17 +100,23 @@ public class SeiyrikonSecurityAuthService {
             throw SeiyrikonSecurityAuthenticationException.userLacksRoles();
         }
 
-        List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("username", user.getUsername());
         extraClaims.put("roles", roles);
 
         String accessToken = seiyrikonSecurityJwtUtilComponent.generateToken(extraClaims, user.getUserId());
         String refreshToken = seiyrikonSecurityJwtUtilComponent.generateRefreshToken(extraClaims, user.getUserId());
 
+        SeiyrikonSecurityPrincipal principal = SeiyrikonSecurityPrincipal.builder()
+                .userId(user.getUserId())
+                .authorities(authorities)
+                .build();
+
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
-                        user.getUserId(),
+                        principal,
                         null,
                         authorities
                 );
@@ -123,18 +136,20 @@ public class SeiyrikonSecurityAuthService {
     public boolean logout() {
         String userId = SeiyrikonSecurityPrincipal.getCurrentUserId().toString();
 
-        if(seiyrikonSecurityTokenSessionRepository
-                .existsById(new SeiyrikonSecurityTokenSession(userId)
-                        .getId())) {
-            seiyrikonSecurityTokenSessionRepository
-                    .deleteById(new SeiyrikonSecurityTokenSession(userId)
-                            .getId());
-        }
+        SeiyrikonSecurityTokenSession defaultTokenSession = new SeiyrikonSecurityTokenSession(userId);
+        defaultTokenSession.setToken(AppConstants.TO_CLEAN);
+
+        SeiyrikonSecurityTokenSession tokenSession = seiyrikonSecurityTokenSessionRepository
+                .findById(new SeiyrikonSecurityTokenSession(userId)
+                .getId())
+                .orElse(defaultTokenSession);
 
         SeiyrikonSecurityTokenBlacklist tokenBlacklist =
                 new SeiyrikonSecurityTokenBlacklist(userId);
+        tokenBlacklist.setToken(tokenSession.getToken());
 
         SeiyrikonSecurityTokenBlacklist blacklistedToken = seiyrikonSecurityTokenBlacklistRepository.save(tokenBlacklist);
+        seiyrikonSecurityTokenSessionRepository.deleteById(tokenSession.getId());
 
         return seiyrikonSecurityTokenBlacklistRepository.existsById(blacklistedToken.getId());
     }
